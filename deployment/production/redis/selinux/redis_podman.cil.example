@@ -1,0 +1,7 @@
+(block redis_podman
+    (blockinherit container)
+    (allow process process ( capability ( chown dac_override fowner fsetid kill net_bind_service setfcap setgid setpcap setuid sys_chroot )))
+    (allow process node_t ( tcp_socket ( node_bind )))
+    (allow process redis_port_t ( tcp_socket ( node_bind name_bind )))
+    (allow process self ( tcp_socket ( listen )))
+)

@@ -1,0 +1,9 @@
+unixsocket /data/run/redis.sock
+unixsocketperm 777
+bind 127.0.0.1
+port 6379
+daemonize no
+stop-writes-on-bgsave-error no
+rdbcompression yes
+#maxmemory 150M
+maxmemory-policy allkeys-lru

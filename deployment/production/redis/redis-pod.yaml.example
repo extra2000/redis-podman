@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: redis-pod
+  name: redis-pod
+  annotations:
+    seccomp.security.alpha.kubernetes.io/pod: localhost/default.json
+spec:
+  restartPolicy: OnFailure
+  hostNetwork: true
+  containers:
+  - name: srv01
+    image: docker.io/redis:6.2-alpine
+    args: ["/etc/redis/redis.conf"]
+    securityContext:
+      allowPrivilegeEscalation: false
+      privileged: false
+      capabilities:
+        add: []
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      seLinuxOptions:
+        type: redis_podman.process
+    resources:
+      requests:
+        memory: 1000Mi
+        cpu: 1000m
+      limits:
+        memory: 1000Mi
+        cpu: 1000m
+    volumeMounts:
+    - mountPath: /etc/redis/redis.conf
+      name: redis-config
+      readOnly: true
+    - mountPath: /data/run/
+      name: redis-socket-dir
+  volumes:
+  - name: redis-config
+    hostPath:
+      path: ./configs/redis.conf
+  - name: redis-socket-dir
+    persistentVolumeClaim:
+      claimName: redis-socket-dir
